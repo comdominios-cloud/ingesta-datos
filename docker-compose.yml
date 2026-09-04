@@ -1,0 +1,20 @@
+# Levanta los 3 contenedores de ingesta. Cada uno hace pull del 100% de los
+# registros de su base y sube el resultado a S3.
+services:
+  ingesta01:
+    build: ./ingesta01
+    container_name: ingesta01-residentes
+    env_file: .env
+    restart: "no"
+
+  ingesta02:
+    build: ./ingesta02
+    container_name: ingesta02-pagos
+    env_file: .env
+    restart: "no"
+
+  ingesta03:
+    build: ./ingesta03
+    container_name: ingesta03-incidencias
+    env_file: .env
+    restart: "no"
