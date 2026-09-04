@@ -7,6 +7,8 @@ bases de los microservicios y los suben como **CSV/JSON a un bucket S3**.
 
 ## Responsable
 
+[@carloscondor1610](https://github.com/carloscondor1610) — Data Science. Ver [INTEGRANTE.md](INTEGRANTE.md).
+
 Integrante a cargo de **data science**, junto con
 [`ms-analitico`](../ms-analitico), que consulta con Athena lo que aqui se sube.
 
