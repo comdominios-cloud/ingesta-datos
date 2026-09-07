@@ -1,4 +1,4 @@
-"""ingesta02 | ms-pagos (PostgreSQL) -> S3.
+"""ingesta02 | ms-pagos (MySQL) -> S3.
 
 PLACEHOLDER. Debe extraer el 100% de los registros de cuotas y pagos
 y subirlos al bucket S3 en formato CSV.
@@ -10,7 +10,7 @@ Uso previsto:
 
 def main() -> None:
     # TODO: 1. Leer configuracion (conexion y S3) desde variables de entorno.
-    # TODO: 2. Conectar a PostgreSQL.
+    # TODO: 2. Conectar a MySQL (VM de base de datos, puerto 3306).
     # TODO: 3. Extraer el 100% de los registros de cuotas y pagos (paginado por lotes).
     # TODO: 4. Escribir el resultado en CSV.
     # TODO: 5. Subir a s3://$S3_BUCKET/$S3_PREFIX<tabla>/ con boto3.
