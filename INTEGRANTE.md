@@ -26,8 +26,8 @@
 
 ## Avance del 50% — entrega del 6 al 12 de septiembre
 
-- [ ] **VM EC2 de ingesta** con Ubuntu 22.04 y Docker
-- [ ] **Bucket S3** creado, con una carpeta por contenedor
+- [listo ] **VM EC2 de ingesta** con Ubuntu 22.04 y Docker
+- [] **Bucket S3** creado, con una carpeta por contenedor
 - [ ] Security Group de la VM: salida a 5432 hacia la VM de base de datos, salida 443 hacia S3
 - [ ] `ingesta01` conectado al **PostgreSQL de @Osomar1705**
 - [ ] Extraccion de los registros y generacion del **CSV/JSON**
