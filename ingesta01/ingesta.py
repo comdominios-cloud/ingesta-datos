@@ -9,8 +9,20 @@ from psycopg import sql
 from dotenv import load_dotenv
 
 
-TABLAS = ("edificios", "unidades", "residentes", "usuarios")
+# La tabla `usuarios` ya NO vive en condominio_residentes: se movio a la base
+# condominio_usuarios cuando usuarios paso a ser su propio microservicio.
+# Se puede sobreescribir con la variable INGESTA_TABLAS (separadas por coma).
+TABLAS_POR_DEFECTO = ("edificios", "unidades", "residentes")
 TAMANO_LOTE = 1000
+
+
+def tablas_a_exportar():
+    configuradas = os.getenv("INGESTA_TABLAS", "").strip()
+
+    if configuradas:
+        return tuple(t.strip() for t in configuradas.split(",") if t.strip())
+
+    return TABLAS_POR_DEFECTO
 
 
 def variable(nombre):
@@ -37,7 +49,11 @@ def exportar_tabla(conn, tabla, carpeta):
         columnas = [fila[0] for fila in cur.fetchall()]
 
     if not columnas:
-        raise ValueError(f"No se encontraron columnas para {tabla}")
+        # No cortamos la ingesta por una tabla que no existe: se avisa y se
+        # sigue con el resto. Cortar aqui significaria no subir NADA a S3,
+        # porque la subida ocurre recien despues de extraer todo.
+        print(f"Aviso: la tabla {tabla} no existe en esta base, se omite", flush=True)
+        return None, 0
 
     consulta = sql.SQL("SELECT {} FROM {} ORDER BY {}").format(
         sql.SQL(", ").join(sql.Identifier(c) for c in columnas),
@@ -92,9 +108,16 @@ def main():
                 "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"
             )
 
-            for tabla in TABLAS:
+            for tabla in tablas_a_exportar():
                 ruta, total = exportar_tabla(conn, tabla, carpeta)
-                archivos.append((tabla, ruta, total))
+
+                if ruta is not None:
+                    archivos.append((tabla, ruta, total))
+
+        if not archivos:
+            raise RuntimeError(
+                "No se exporto ninguna tabla: revisar INGESTA_TABLAS y la base configurada"
+            )
 
         # Subir únicamente después de completar la extracción.
         for tabla, ruta, total in archivos:
@@ -110,7 +133,10 @@ def main():
                 flush=True,
             )
 
-    print("Ingesta completada: 4 tablas exportadas y subidas.", flush=True)
+    print(
+        f"Ingesta completada: {len(archivos)} tablas exportadas y subidas.",
+        flush=True,
+    )
 
 
 if __name__ == "__main__":
